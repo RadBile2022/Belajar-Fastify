@@ -1,25 +1,12 @@
 import { fastify as kartolo } from "fastify";
 import swaggerPlugin from "@fastify/swagger";
+import swaggerUiPlugin from "@fastify/swagger-ui";
 
 const ngatno = async () => {
   const sugio = kartolo({});
 
   // register swagger
-  await sugio.register(swaggerPlugin, {});
-  const port = 3000;
-  const url = "localhost";
-  const baseUrlApi = "/api/tefa";
-
-  sugio.route({
-    method: "GET",
-    url: "/",
-
-    handler: function (request, reply) {
-      reply.send({ hello: "world" });
-    },
-  });
-
-  await sugio.register(require("@fastify/swagger"), {
+  await sugio.register(swaggerPlugin, {
     swagger: {
       info: {
         title: "Test swagger",
@@ -57,6 +44,23 @@ const ngatno = async () => {
           in: "header",
         },
       },
+    },
+  });
+
+  await sugio.register(swaggerUiPlugin, {
+    routePrefix: "/documentation",
+  });
+
+  const port = 3000;
+  const url = "localhost";
+  const baseUrlApi = "/api/tefa";
+
+  sugio.route({
+    method: "GET",
+    url: "/",
+
+    handler: function (request, reply) {
+      reply.send({ hello: "world" });
     },
   });
 
@@ -113,10 +117,6 @@ const ngatno = async () => {
     },
     (req, reply) => {}
   );
-
-  await sugio.ready();
-
-  sugio.swagger();
 
   // route
   sugio.post(`${baseUrlApi}/organization`, (request, reply) => {
