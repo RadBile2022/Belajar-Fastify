@@ -19,8 +19,8 @@
     "@deboxsoft/module-fastify": "^2.0.19",
     "@deboxsoft/module-mongo": "^2.6.17",
     "@deboxsoft/module-server": "~2.6.14",
-    "fastify": "^4.5.3",
-    "@fastify/swagger": "^8.2.1"
+    "@fastify/swagger": "^8.2.1",
+    "fastify": "^4.5.3"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.5.0",

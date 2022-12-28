@@ -1,19 +1,142 @@
-import { fastify } from "fastify";
+import { fastify as kartolo } from "fastify";
 import swaggerPlugin from "@fastify/swagger";
 
-const server = async () => {
-  const app = fastify({});
+const ngatno = async () => {
+  const sugio = kartolo({});
 
   // register swagger
-  await app.register(swaggerPlugin, {});
+  await sugio.register(swaggerPlugin, {});
   const port = 3000;
   const url = "localhost";
   const baseUrlApi = "/api/tefa";
+
+  sugio.route({
+    method: "GET",
+    url: "/",
+
+    handler: function (request, reply) {
+      reply.send({ hello: "world" });
+    },
+  });
+
+  await sugio.register(require("@fastify/swagger"), {
+    swagger: {
+      info: {
+        title: "Test swagger",
+        description: "Testing the Fastify swagger API",
+        version: "0.1.0",
+      },
+      externalDocs: {
+        url: "https://swagger.io",
+        description: "Find more info here",
+      },
+      host: "localhost",
+      schemes: ["http"],
+      consumes: ["application/json"],
+      produces: ["application/json"],
+      tags: [
+        { name: "user", description: "User related end-points" },
+        { name: "code", description: "Code related end-points" },
+      ],
+      definitions: {
+        User: {
+          type: "object",
+          required: ["id", "email"],
+          properties: {
+            id: { type: "string", format: "uuid" },
+            firstName: { type: "string" },
+            lastName: { type: "string" },
+            email: { type: "string", format: "email" },
+          },
+        },
+      },
+      securityDefinitions: {
+        apiKey: {
+          type: "apiKey",
+          name: "apiKey",
+          in: "header",
+        },
+      },
+    },
+  });
+
+  sugio.put(
+    "/some-route/:id",
+    {
+      schema: {
+        description: "post some data",
+        tags: ["user", "code"],
+        summary: "qwerty",
+        params: {
+          type: "object",
+          properties: {
+            id: {
+              type: "string",
+              description: "user id",
+            },
+          },
+        },
+        body: {
+          type: "object",
+          properties: {
+            hello: { type: "string" },
+            obj: {
+              type: "object",
+              properties: {
+                some: { type: "string" },
+              },
+            },
+          },
+        },
+        response: {
+          201: {
+            description: "Successful response",
+            type: "object",
+            properties: {
+              hello: { type: "string" },
+            },
+          },
+          default: {
+            description: "Default response",
+            type: "object",
+            properties: {
+              foo: { type: "string" },
+            },
+          },
+        },
+        security: [
+          {
+            apiKey: [],
+          },
+        ],
+      },
+    },
+    (req, reply) => {}
+  );
+
+  await sugio.ready();
+
+  sugio.swagger();
+
   // route
-  app.post(`${baseUrlApi}/organization`, (request, reply) => {});
+  sugio.post(`${baseUrlApi}/organization`, (request, reply) => {
+    reply.send("world");
+  });
+
+  sugio.get(`${baseUrlApi}/organization`, (request, reply) => {
+    reply.send("get");
+  });
+
+  sugio.put(`${baseUrlApi}/organization`, (request, reply) => {
+    reply.send("put");
+  });
+
+  sugio.delete(`${baseUrlApi}/organization`, (request, reply) => {
+    reply.send("delete");
+  });
 
   // close route
-  app.listen({ port, host: "::" }, (err, address) => {
+  sugio.listen({ port, host: "::" }, (err, address) => {
     if (err) {
       console.error(err);
       process.exit(1);
@@ -22,4 +145,4 @@ const server = async () => {
   });
 };
 
-server();
+ngatno();
